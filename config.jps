@@ -5,7 +5,8 @@ globals:
   TARGET_GROUP: ${settings.targetGroup}
   TARGET_NODES: ${settings.targetNodes}
   OPTIMIZATION: ${settings.optimization}
-  CONFIGS_PATH: https://github.com/jelastic/templates
+  CONFIGS_PATH: https://github.com/stackharbor-devops/templates
+  CONFIGS_REF: sh-5
   
 onInstall:
   - script: |
@@ -21,10 +22,10 @@ onInstall:
       
   - cmd[${globals.TARGET_NODES}]: |-
       rm -rf /tmp/templates;
-      wget '${globals.CONFIGS_PATH}/archive/master.zip' -O /tmp/master.zip;
-      unzip /tmp/master.zip templates-master/${this.nodeType}/${this.tag}/${globals.OPTIMIZATION}/* -d /tmp/templates >> /var/log/run.log;
+      wget '${globals.CONFIGS_PATH}/archive/refs/tags/${globals.CONFIGS_REF}.zip' -O /tmp/master.zip;
+      unzip /tmp/master.zip templates-${globals.CONFIGS_REF}/${this.nodeType}/${this.tag}/${globals.OPTIMIZATION}/* -d /tmp/templates >> /var/log/run.log;
       chown -R 700:700 /tmp/templates >> /var/log/run.log;
-      rsync -azP /tmp/templates/templates-master/${this.nodeType}/${this.tag}/${globals.OPTIMIZATION}/* / >> /var/log/run.log 2>&1;
+      rsync -azP /tmp/templates/templates-${globals.CONFIGS_REF}/${this.nodeType}/${this.tag}/${globals.OPTIMIZATION}/* / >> /var/log/run.log 2>&1;
       jem service restart;
     user: root
       
